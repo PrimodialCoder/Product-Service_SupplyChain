@@ -9,6 +9,4 @@ import lombok.*;
 @Getter
 public class Category extends BaseModel {
     private String name;
-    private String description;
-
 }
