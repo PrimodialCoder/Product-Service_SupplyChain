@@ -1,13 +1,16 @@
 package com.supplychain.productservicesupplychain.controllers;
 
+import com.supplychain.productservicesupplychain.dtos.CreateFakeStoreProductRequestDto;
+import com.supplychain.productservicesupplychain.dtos.ErrorDto;
 import com.supplychain.productservicesupplychain.dtos.ProductResponseDto;
+import com.supplychain.productservicesupplychain.exceptions.ProductNotFoundException;
 import com.supplychain.productservicesupplychain.models.Product;
 import com.supplychain.productservicesupplychain.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ProductController {
@@ -20,8 +23,39 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ProductResponseDto getProductById(@PathVariable("id") Long id) {
+    public ProductResponseDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
         Product product = productService.getProductById(id);
         return ProductResponseDto.from(product);
     }
+
+    @GetMapping("/products")
+    public List<ProductResponseDto> getAllProducts() throws ProductNotFoundException {
+        List<Product> allProducts = productService.getAllProducts();
+        return allProducts.stream().map(ProductResponseDto::from).collect(Collectors.toList());
+    }
+
+    @PostMapping("/products")
+    public void createProduct(
+            @RequestBody CreateFakeStoreProductRequestDto
+                    requestDto) throws ProductNotFoundException {
+        Product product = productService.createProduct(
+                requestDto.getName(),
+                requestDto.getDescription(),
+                requestDto.getPrice(),
+                requestDto.getImageUrl(),
+                requestDto.getCategory()
+        );
+
+    }
+
+
+
+//    @ExceptionHandler(NullPointerException.class)
+//    public ErrorDto handleNullPointerException(){
+//        ErrorDto errorDto = new ErrorDto();
+//        errorDto.setStatus("Failure");
+//        errorDto.setMessage("Product Cannot be null");
+//        return errorDto;
+//    }
+
 }

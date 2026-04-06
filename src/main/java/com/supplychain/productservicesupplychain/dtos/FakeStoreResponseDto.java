@@ -13,11 +13,12 @@ public class FakeStoreResponseDto {
     private String title;
     private double price;
     private String description;
-    private String image;
     private String category;
+    private String image;
 
     public Product toProduct() {
         Product product = new Product();
+        product.setId(this.id);
         product.setName(this.title);
         product.setPrice(this.price);
         product.setDescription(this.description);
