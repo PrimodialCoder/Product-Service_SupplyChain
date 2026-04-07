@@ -16,13 +16,11 @@ import java.util.List;
 @Service
 public class FakeStoreProductService implements ProductService {
 
-    private final ProductService productService;
     RestTemplate restTemplate;
 
     @Autowired
-    public FakeStoreProductService(RestTemplate restTemplate, ProductService productService) {
+    public FakeStoreProductService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.productService = productService;
     }
 
     @Override
@@ -76,12 +74,19 @@ public class FakeStoreProductService implements ProductService {
 //                id
 //        );
         //exchange()
-        //when we use exchange() it deels in ResponseEntities and http entity rathar in dtos takes httpEntity as request body and response entity as response body
+        //when we use exchange() it deals in ResponseEntities and http entity rathar in dtos takes httpEntity as request body and response entity as response body
+        //for http exchange it is a generic method for which we have to create http entity and it sends the response in the form of response entity
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-
-        return null;
+        HttpEntity<FakeStoreRequestDto> requestEntity = new HttpEntity<>(updatedFakeStoreRequestDto, headers);
+        ResponseEntity<FakeStoreResponseDto> responseEntity = restTemplate.exchange(
+                "https://fakestoreapi.com/products/" + id,
+                HttpMethod.PUT,
+                requestEntity,
+                FakeStoreResponseDto.class
+        );
+        return responseEntity.getBody().toProduct();
     }
 
     private FakeStoreRequestDto createDtoFromParams(String name, String description, Double price, String imageUrl, String category) {
