@@ -7,6 +7,8 @@ import com.supplychain.productservicesupplychain.exceptions.ProductNotFoundExcep
 import com.supplychain.productservicesupplychain.models.Product;
 import com.supplychain.productservicesupplychain.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +37,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public void createProduct(
+    public ResponseEntity<ProductResponseDto> createProduct(
             @RequestBody CreateFakeStoreProductRequestDto
                     requestDto) throws ProductNotFoundException {
         Product product = productService.createProduct(
@@ -45,9 +47,22 @@ public class ProductController {
                 requestDto.getImageUrl(),
                 requestDto.getCategory()
         );
-
+        return new ResponseEntity<>(ProductResponseDto.from(product),HttpStatus.CREATED);
     }
 
+    @PutMapping("/product/{id}")
+    public ResponseEntity<ProductResponseDto> replaceProduct(@PathVariable("id") long id, @RequestBody CreateFakeStoreProductRequestDto requestDto) throws ProductNotFoundException {
+        Product updatedProduct = productService.replaceProduct(
+                id,
+                requestDto.getName(),
+                requestDto.getDescription(),
+                requestDto.getPrice(),
+                requestDto.getImageUrl(),
+                requestDto.getCategory()
+        );
+        return new ResponseEntity<>(ProductResponseDto.from(updatedProduct),HttpStatus.OK);
+
+    }
 
 
 //    @ExceptionHandler(NullPointerException.class)
