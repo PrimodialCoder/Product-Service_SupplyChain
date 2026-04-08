@@ -1,5 +1,8 @@
 package com.supplychain.productservicesupplychain.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.supplychain.productservicesupplychain.dtos.CreateFakeStoreProductRequestDto;
 import com.supplychain.productservicesupplychain.dtos.ErrorDto;
 import com.supplychain.productservicesupplychain.dtos.ProductResponseDto;
@@ -61,10 +64,24 @@ public class ProductController {
                 requestDto.getCategory()
         );
         return new ResponseEntity<>(ProductResponseDto.from(updatedProduct),HttpStatus.OK);
-
     }
 
+    //for patch request we need to have 2^n  posibilities that can come as a request so we have to create 2^n dtos which is not feisable
+    //solution : json patch -> third party library, it uses objectMapper internally
+//    @PatchMapping("/products/{id}")
+//    public ResponseEntity<ProductResponseDto> patch
 
+    @PatchMapping(
+            path = "/products/{id}",
+            consumes = "application/json-patch+json"
+    )
+    public ProductResponseDto updateProduct(
+            @PathVariable("id") long id,
+            @RequestBody JsonPatch jsonPatch
+    ) throws ProductNotFoundException, JsonPatchException, JsonProcessingException{
+        Product product = productService.applyPatchToProduct(id, jsonPatch);
+        return ProductResponseDto.from(product);
+    }
 //    @ExceptionHandler(NullPointerException.class)
 //    public ErrorDto handleNullPointerException(){
 //        ErrorDto errorDto = new ErrorDto();
