@@ -1,7 +1,15 @@
 spring:
   application:
     name: ProductService-supplyChain
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/ProductService_supplyChain
+    username: ProductService_supplyChain_user
+#    password: secret
+    driver-class-name: com.mysql.cj.jdbc.Driver
 server:
   port: 8081
-  servlet:
-    context
+

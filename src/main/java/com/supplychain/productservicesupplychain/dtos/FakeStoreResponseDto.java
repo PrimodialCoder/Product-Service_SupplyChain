@@ -23,7 +23,9 @@ public class FakeStoreResponseDto {
         product.setPrice(this.price);
         product.setDescription(this.description);
         product.setImageUrl(this.image);
-        product.setCategory(new Category(this.category));
+        Category category = new Category();
+        category.setName(this.category);
+        product.setCategory(category);
         return product;
     }
 }
