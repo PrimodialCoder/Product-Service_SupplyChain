@@ -10,6 +10,7 @@ import com.supplychain.productservicesupplychain.exceptions.ProductNotFoundExcep
 import com.supplychain.productservicesupplychain.models.Product;
 import com.supplychain.productservicesupplychain.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +24,7 @@ public class ProductController {
     ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    public ProductController(@Qualifier("productDbService") ProductService productService) {this.productService = productService;}
 
     @GetMapping("/products/{id}")
     public ProductResponseDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
